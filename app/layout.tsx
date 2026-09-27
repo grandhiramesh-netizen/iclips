@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Suspense } from "react";
 import { fontVariables } from "@/app/fonts";
+import { AppHeader } from "@/components/app-header";
+import { Shell } from "@/components/shell";
+import { MainColumn } from "@/components/main-column";
+import { Sidebar, SidebarFallback } from "@/components/sidebar";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -19,21 +23,20 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${fontVariables} antialiased`}>
-      <body className="flex min-h-dvh flex-col font-sans">
+      <body className="min-h-dvh bg-background font-sans text-foreground">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-background"
         >
           Skip to content
         </a>
-        <header className="border-b border-black/10 px-6 py-4 dark:border-white/10">
-          <Link href="/" className="text-sm font-semibold tracking-tight">
-            iClips
-          </Link>
-        </header>
-        <main id="main" className="flex flex-1 flex-col">
-          {children}
-        </main>
+        <Shell>
+          <AppHeader />
+          <Suspense fallback={<SidebarFallback />}>
+            <Sidebar />
+          </Suspense>
+          <MainColumn>{children}</MainColumn>
+        </Shell>
       </body>
     </html>
   );
